@@ -1,5 +1,5 @@
-# 🇮🇳 Smart India Travel Planner
 
+<<<<<<< HEAD
 A modern travel planning web application built with React.js + Vite.
 
 ## 🚀 Tech Stack
@@ -146,3 +146,5 @@ create table expenses (
 
 First-year college project — smart, professional, and viva-friendly!
 # Smart-India-Travel-Planner
+=======
+>>>>>>> 74e74b16e84c4ba4659b4a083872525b5b5d436a
