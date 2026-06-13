@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { Chart, ArcElement, Tooltip, Legend, DoughnutController, BarElement, CategoryScale, LinearScale, BarController } from 'chart.js'
 import toast from 'react-hot-toast'
 import { EXPENSE_CATEGORIES } from '../utils/data'
+import { getExpenseCategories } from '../services/supabase'
 
 Chart.register(ArcElement, Tooltip, Legend, DoughnutController, BarElement, CategoryScale, LinearScale, BarController)
 
@@ -50,6 +51,15 @@ export default function ExpensePage() {
     })
     return () => { if (doughnutChart.current) doughnutChart.current.destroy() }
   }, [tab, expenses])
+
+  useEffect(() => {
+    getExpenseCategories().then((cats) => {
+      if (cats && cats.length) {
+        // map to expected format
+        // cats may be [{icon,label}] or similar
+      }
+    })
+  }, [])
 
   function addMember() {
     if (newMember.trim() && !members.includes(newMember.trim())) {
@@ -151,7 +161,7 @@ export default function ExpensePage() {
                 {EXPENSE_CATEGORIES.map((c) => (
                   <button key={c.icon} onClick={() => setForm({ ...form, category: c.icon })} style={{
                     padding: '0.5rem 0.75rem', borderRadius: 10, cursor: 'pointer', fontSize: '1.25rem',
-                    border: '1px solid', fontFamily: 'DM Sans,sans-serif', background: 'none',
+                    border: '1px solid', fontFamily: 'DM Sans,sans-serif',
                     borderColor: form.category === c.icon ? 'rgba(249,115,22,0.5)' : 'rgba(255,255,255,0.08)',
                     background:  form.category === c.icon ? 'rgba(249,115,22,0.1)' : 'transparent',
                   }}>{c.icon}</button>

@@ -24,7 +24,7 @@ export default function ProfilePage() {
           <button
             className="btn-primary"
             style={{ padding: '0.75rem 2rem', borderRadius: 12, cursor: 'pointer', fontFamily: 'DM Sans,sans-serif', fontSize: '1rem' }}
-            onClick={() => navigate('/auth')}
+            onClick={() => navigate('/login')}
           >
             Login / Sign Up
           </button>

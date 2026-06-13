@@ -8,15 +8,21 @@ export default function DestinationCard({ dest, onSave, isSaved }) {
   return (
     <motion.div
       className="card-base"
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.2 }}
+      whileHover={{ y: -6, scale: 1.01 }}
+      transition={{ type: 'spring', stiffness: 350, damping: 22 }}
+      style={{ willChange: 'transform' }}
     >
-      {/* Image / Emoji */}
-      <div style={{
-        height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: '4rem', background: 'linear-gradient(135deg,rgba(249,115,22,0.1),rgba(0,0,0,0))',
-      }}>
-        {dest.emoji}
+      {/* Image */}
+      <div style={{ height: 180, overflow: 'hidden', position: 'relative' }}>
+        <img
+          src={dest.image}
+          alt={dest.name}
+          referrerPolicy="no-referrer"
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        />
+        <div style={{ position: 'absolute', top: '0.75rem', right: '0.75rem', fontSize: '1.25rem', background: 'rgba(15,23,42,0.85)', width: '2.2rem', height: '2.2rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.15)' }}>
+          {dest.emoji}
+        </div>
       </div>
 
       <div style={{ padding: '1.25rem' }}>

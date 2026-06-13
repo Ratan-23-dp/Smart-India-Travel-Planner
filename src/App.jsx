@@ -13,6 +13,8 @@ import ExpensePage     from './pages/ExpensePage'
 import SavedTripsPage  from './pages/SavedTripsPage'
 import ProfilePage     from './pages/ProfilePage'
 import AuthPage        from './pages/AuthPage'
+import LoginPage       from './pages/LoginPage'
+import SignupPage      from './pages/SignupPage'
 
 export default function App() {
   return (
@@ -29,6 +31,8 @@ export default function App() {
           <Route path="/expense"             element={<ExpensePage />} />
           <Route path="/saved"               element={<SavedTripsPage />} />
           <Route path="/profile"             element={<ProfilePage />} />
+          <Route path="/login"               element={<LoginPage />} />
+          <Route path="/signup"              element={<SignupPage />} />
           <Route path="/auth"                element={<AuthPage />} />
         </Routes>
       </AnimatePresence>

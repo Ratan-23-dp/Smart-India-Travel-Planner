@@ -63,8 +63,8 @@ export default function Navbar() {
           </>
         ) : (
           <>
-            <Link to="/auth" style={{ padding: '0.4rem 1rem', borderRadius: 8, fontSize: '0.82rem', color: '#94a3b8', border: '1px solid rgba(255,255,255,0.08)', textDecoration: 'none' }}>Login</Link>
-            <Link to="/auth" style={{ padding: '0.4rem 1rem', borderRadius: 8, fontSize: '0.82rem', background: 'linear-gradient(135deg,#f97316,#ea580c)', color: '#fff', textDecoration: 'none', fontWeight: 500 }}>Sign Up</Link>
+            <Link to="/login" style={{ padding: '0.4rem 1rem', borderRadius: 8, fontSize: '0.82rem', color: '#94a3b8', border: '1px solid rgba(255,255,255,0.08)', textDecoration: 'none' }}>Login</Link>
+            <Link to="/signup" style={{ padding: '0.4rem 1rem', borderRadius: 8, fontSize: '0.82rem', background: 'linear-gradient(135deg,#f97316,#ea580c)', color: '#fff', textDecoration: 'none', fontWeight: 500 }}>Sign Up</Link>
           </>
         )}
         {/* Mobile menu button */}

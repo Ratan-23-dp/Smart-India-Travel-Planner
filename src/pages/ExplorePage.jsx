@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import DestinationCard from '../components/DestinationCard'
-import { DESTINATIONS } from '../utils/data'
+import { getDestinations } from '../services/supabase'
+import { DESTINATIONS as LOCAL_DESTINATIONS } from '../utils/data'
 import toast from 'react-hot-toast'
 
 const CATEGORIES = ['All', 'Beach', 'Heritage', 'Hill Station', 'City', 'Spiritual', 'Nature']
@@ -11,7 +12,20 @@ export default function ExplorePage() {
   const [category, setCategory] = useState('All')
   const [saved,    setSaved]    = useState([])
 
-  const filtered = DESTINATIONS.filter((d) =>
+  const [destinations, setDestinations] = useState([])
+
+  useEffect(() => {
+    getDestinations().then((d) => {
+      const data = d.length > 0 ? d : LOCAL_DESTINATIONS
+      const merged = data.map(item => {
+        const local = LOCAL_DESTINATIONS.find(l => l.name.toLowerCase() === item.name.toLowerCase())
+        return { ...item, image: item.image || local?.image }
+      })
+      setDestinations(merged)
+    })
+  }, [])
+
+  const filtered = destinations.filter((d) =>
     (category === 'All' || d.category === category) &&
     d.name.toLowerCase().includes(search.toLowerCase())
   )
@@ -63,7 +77,7 @@ export default function ExplorePage() {
         {/* Grid */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: '1.25rem' }}>
           {filtered.map((dest, i) => (
-            <motion.div key={dest.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}>
+            <motion.div key={dest.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', stiffness: 260, damping: 20, delay: Math.min(i * 0.04, 0.4) }}>
               <DestinationCard dest={dest} onSave={handleSave} isSaved={saved.includes(dest.id)} />
             </motion.div>
           ))}

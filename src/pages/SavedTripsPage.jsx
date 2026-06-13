@@ -1,26 +1,19 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
+import { useSavedTrips } from '../hooks/useSavedTrips'
+import { useAuth } from '../context/AuthContext'
 
-const SAMPLE_TRIPS = [
-  { id: 1, dest: 'Goa',    days: 3, type: 'Friends',   date: '15 Dec 2024', travelers: 4, cost: 24000, emoji: '🏖️' },
-  { id: 2, dest: 'Jaipur', days: 2, type: 'Couple',    date: '22 Jan 2025', travelers: 2, cost: 9500,  emoji: '🏰' },
-  { id: 3, dest: 'Manali', days: 5, type: 'Adventure', date: '5 Mar 2025',  travelers: 6, cost: 45000, emoji: '⛰️' },
-]
 
 export default function SavedTripsPage() {
-  const [trips,  setTrips]  = useState(SAMPLE_TRIPS)
+  const { user } = useAuth()
+  const { trips, loading, removeTrip } = useSavedTrips()
   const [search, setSearch] = useState('')
 
-  const filtered = trips.filter((t) => t.dest.toLowerCase().includes(search.toLowerCase()))
-
-  function handleDelete(id) {
-    setTrips(trips.filter((t) => t.id !== id))
-    toast.success('Trip deleted')
-  }
+  const filtered = trips.filter((t) => (t.destination || t.dest || '').toLowerCase().includes(search.toLowerCase()))
 
   function handleDownload(trip) {
-    toast.success(`Downloading ${trip.dest} itinerary PDF...`)
+    toast.success(`Downloading ${trip.destination || trip.dest} itinerary PDF...`)
   }
 
   return (
@@ -40,6 +33,19 @@ export default function SavedTripsPage() {
           style={{ marginBottom: '1.5rem' }}
         />
 
+        {loading && (
+          <div style={{ textAlign: 'center', padding: '3rem', color: '#64748b' }}>
+            Loading saved trips from Supabase...
+          </div>
+        )}
+
+        {!loading && !user && (
+          <div style={{ textAlign: 'center', padding: '3rem', color: '#64748b' }}>
+            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔐</div>
+            <p>Sign in to load your saved trips from Supabase.</p>
+          </div>
+        )}
+
         {filtered.map((t, i) => (
           <motion.div
             key={t.id}
@@ -48,13 +54,13 @@ export default function SavedTripsPage() {
             transition={{ delay: i * 0.08 }}
             style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--card)', border: '1px solid var(--card-border)', borderRadius: 12, padding: '1rem 1.25rem', marginBottom: '0.75rem', transition: 'border-color 0.2s' }}
           >
-            <span style={{ fontSize: '1.75rem' }}>{t.emoji}</span>
+            <span style={{ fontSize: '1.75rem' }}>{t.emoji || '🧳'}</span>
             <div style={{ flex: 1 }}>
               <h4 style={{ fontSize: '0.95rem', fontWeight: 600, marginBottom: '0.2rem', fontFamily: 'DM Sans,sans-serif' }}>
-                {t.dest} — {t.days} Days
+                {t.destination || t.dest} — {t.days || t.days_count || 0} Days
               </h4>
               <p style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                {t.type} trip · {t.travelers} travellers · {t.date} · ₹{t.cost.toLocaleString()}
+                {(t.type || 'Trip')} · {t.travelers || t.travelers_count || 0} travellers · {t.created_at ? new Date(t.created_at).toLocaleDateString() : (t.date || 'Saved locally')} · ₹{Number(t.budget || t.cost || 0).toLocaleString()}
               </p>
             </div>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -65,7 +71,7 @@ export default function SavedTripsPage() {
                 📄 PDF
               </button>
               <button
-                onClick={() => handleDelete(t.id)}
+                onClick={() => removeTrip(t.id)}
                 style={{ padding: '0.4rem 0.85rem', borderRadius: 8, cursor: 'pointer', fontSize: '0.78rem', fontFamily: 'DM Sans,sans-serif', background: 'transparent', color: '#94a3b8', border: '1px solid rgba(255,255,255,0.08)' }}
               >
                 🗑️
@@ -74,7 +80,7 @@ export default function SavedTripsPage() {
           </motion.div>
         ))}
 
-        {filtered.length === 0 && (
+        {!loading && user && filtered.length === 0 && (
           <div style={{ textAlign: 'center', padding: '4rem', color: '#64748b' }}>
             <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>💾</div>
             <p>No saved trips found.</p>

@@ -1,13 +1,16 @@
-import { createClient } from '@supabase/supabase-js'
+import { supabase } from '../utils/supabase'
 
-const supabaseUrl  = import.meta.env.VITE_SUPABASE_URL  || 'https://placeholder.supabase.co'
-const supabaseKey  = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder-key'
-
-export const supabase = createClient(supabaseUrl, supabaseKey)
+export { supabase }
 
 // ── Auth ──────────────────────────────────────────────────────────────────
-export const signUp = (email, password) =>
-  supabase.auth.signUp({ email, password })
+export const signUp = (email, password, fullName = '') =>
+  supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: fullName ? { full_name: fullName } : undefined,
+    },
+  })
 
 export const signIn = (email, password) =>
   supabase.auth.signInWithPassword({ email, password })
@@ -38,3 +41,64 @@ export const saveExpense = (expense) =>
 
 export const getExpenses = (groupId) =>
   supabase.from('expenses').select('*').eq('group_id', groupId)
+
+// ── Reads ──────────────────────────────────────────────────────────────────
+export const getDestinations = async () => {
+  try {
+    const { data, error } = await supabase.from('destinations').select('*').order('id')
+    if (error) throw error
+    return data || []
+  } catch {
+    return []
+  }
+}
+
+export const getDestinationByName = async (name) => {
+  try {
+    const { data, error } = await supabase.from('destinations').select('*').ilike('name', name).maybeSingle()
+    if (error) throw error
+    return data || null
+  } catch {
+    return null
+  }
+}
+
+export const getFoods = async () => {
+  try {
+    const { data, error } = await supabase.from('foods').select('*').order('id')
+    if (error) throw error
+    return data || []
+  } catch {
+    return []
+  }
+}
+
+export const getItineraryByDestination = async (destination) => {
+  try {
+    const { data, error } = await supabase.from('itineraries').select('*').eq('destination', destination)
+    if (error) throw error
+    return data || []
+  } catch {
+    return []
+  }
+}
+
+export const getTripTypes = async () => {
+  try {
+    const { data, error } = await supabase.from('trip_types').select('*')
+    if (error) throw error
+    return data || []
+  } catch {
+    return []
+  }
+}
+
+export const getExpenseCategories = async () => {
+  try {
+    const { data, error } = await supabase.from('expense_categories').select('*')
+    if (error) throw error
+    return data || []
+  } catch {
+    return []
+  }
+}

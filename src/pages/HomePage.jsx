@@ -2,17 +2,18 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import DestinationCard from '../components/DestinationCard'
-import { DESTINATIONS } from '../utils/data'
+import { getDestinations } from '../services/supabase'
+import { DESTINATIONS as LOCAL_DESTINATIONS } from '../utils/data'
 
-const FLOAT_ICONS = ['✈️','🗺️','🏔️','🌊','🏰','🎒','📸','🌺','⛵','🎭','🦁','🌅']
-const QUICK_DESTS = ['Goa','Jaipur','Manali','Delhi','Mumbai','Varanasi','Patna']
+const FLOAT_ICONS = ['✈️', '🗺️', '🏔️', '🌊', '🏰', '🎒', '📸', '🌺', '⛵', '🎭', '🦁', '🌅']
+const QUICK_DESTS = ['Goa', 'Jaipur', 'Manali', 'Delhi', 'Mumbai', 'Varanasi', 'Patna']
 const FEATURES = [
   { icon: '🧠', title: 'AI Itinerary Generator', desc: 'Smart day-by-day trip plans tailored to your budget, style, and duration.' },
-  { icon: '💸', title: 'Expense Splitter',       desc: 'Add members, track group expenses and settle bills effortlessly.' },
-  { icon: '🌤️', title: 'Live Weather',           desc: 'Real-time weather and 5-day forecasts for any destination in India.' },
-  { icon: '🍽️', title: 'Food Explorer',          desc: 'Discover local cuisines, street food, recipes and regional specialities.' },
-  { icon: '🗺️', title: 'Interactive Maps',       desc: 'Visualise your trip with Leaflet maps, markers and nearby attractions.' },
-  { icon: '📄', title: 'PDF Download',           desc: 'Download your complete itinerary as a beautifully formatted PDF.' },
+  { icon: '💸', title: 'Expense Splitter', desc: 'Add members, track group expenses and settle bills effortlessly.' },
+  { icon: '🌤️', title: 'Live Weather', desc: 'Real-time weather and 5-day forecasts for any destination in India.' },
+  { icon: '🍽️', title: 'Food Explorer', desc: 'Discover local cuisines, street food, recipes and regional specialities.' },
+  { icon: '🗺️', title: 'Interactive Maps', desc: 'Visualise your trip with Leaflet maps, markers and nearby attractions.' },
+  { icon: '📄', title: 'PDF Download', desc: 'Download your complete itinerary as a beautifully formatted PDF.' },
 ]
 
 export default function HomePage() {
@@ -22,20 +23,33 @@ export default function HomePage() {
 
   // Animated counters
   useEffect(() => {
-    const targets = { trips: 12000, destinations: 500, users: 35000 }
+    const targets = { trips: 120, destinations: 50, users: 350 }
     const steps = 60
     const dur = 2000
     let cur = { trips: 0, destinations: 0, users: 0 }
     const id = setInterval(() => {
       cur = {
-        trips:        Math.min(cur.trips        + targets.trips / steps,        targets.trips),
+        trips: Math.min(cur.trips + targets.trips / steps, targets.trips),
         destinations: Math.min(cur.destinations + targets.destinations / steps, targets.destinations),
-        users:        Math.min(cur.users        + targets.users / steps,        targets.users),
+        users: Math.min(cur.users + targets.users / steps, targets.users),
       }
       setCounter({ trips: Math.floor(cur.trips), destinations: Math.floor(cur.destinations), users: Math.floor(cur.users) })
       if (cur.trips >= targets.trips) clearInterval(id)
     }, dur / steps)
     return () => clearInterval(id)
+  }, [])
+
+  const [destinations, setDestinations] = useState([])
+
+  useEffect(() => {
+    getDestinations().then((d) => {
+      const data = d.length > 0 ? d : LOCAL_DESTINATIONS
+      const merged = data.map(item => {
+        const local = LOCAL_DESTINATIONS.find(l => l.name.toLowerCase() === item.name.toLowerCase())
+        return { ...item, image: item.image || local?.image }
+      })
+      setDestinations(merged)
+    })
   }, [])
 
   return (
@@ -102,7 +116,7 @@ export default function HomePage() {
           <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center', marginTop: '3rem', flexWrap: 'wrap' }}>
             {[
               { num: `${counter.trips.toLocaleString()}+`, lbl: 'Trips Planned' },
-              { num: `${counter.destinations}+`,           lbl: 'Destinations' },
+              { num: `${counter.destinations}+`, lbl: 'Destinations' },
               { num: `${counter.users.toLocaleString()}+`, lbl: 'Happy Travellers' },
             ].map((s) => (
               <div key={s.lbl} style={{ textAlign: 'center' }}>
@@ -124,7 +138,7 @@ export default function HomePage() {
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: '1.25rem' }}>
-            {DESTINATIONS.slice(0, 6).map((dest) => (
+            {destinations.slice(0, 6).map((dest) => (
               <DestinationCard key={dest.id} dest={dest} />
             ))}
           </div>

@@ -72,9 +72,10 @@ cp .env.example .env
 
 ```env
 VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 VITE_OPENWEATHER_API_KEY=your_openweather_api_key
-VITE_OPENTRIPMAP_API_KEY=your_opentripmap_api_key
+VITE_GEOAPIFY_API_KEY=your_geoapify_api_key
 ```
 
 ### 3. Run Development Server
@@ -93,7 +94,7 @@ npm run build
 |---------|-----|-----------|
 | Supabase | https://supabase.com | ✅ Free |
 | OpenWeather | https://openweathermap.org/api | ✅ Free |
-| OpenTripMap | https://opentripmap.io | ✅ Free |
+| Geoapify (Places/Geocoding) | https://www.geoapify.com | ✅ Free |
 | TheMealDB | https://www.themealdb.com/api.php | ✅ Free |
 
 ## 🗄️ Supabase Tables
